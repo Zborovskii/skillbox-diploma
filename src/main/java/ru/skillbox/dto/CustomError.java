@@ -1,4 +1,4 @@
-package DTO;
+package ru.skillbox.dto;
 
 public class CustomError {
     String title;

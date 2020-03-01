@@ -1,12 +1,11 @@
-package main;
+package ru.skillbox;
 
-import controllers.ApiGeneralController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"controllers", "main"})
+@ComponentScan(basePackages = {"ru.skillbox"}, basePackageClasses = Main.class)
 public class Main {
 
     public static void main(String[] args) {

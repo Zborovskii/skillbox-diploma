@@ -1,4 +1,4 @@
-package main.model;
+package ru.skillbox.model;
 
 public class GeneralBlogInfo {
 
@@ -9,13 +9,13 @@ public class GeneralBlogInfo {
     private String copyright;
     private String copyrightFrom;
 
-    public GeneralBlogInfo() {
-        this.title = "DevPub";
-        this.subtitle = "Рассказы разработчиков";
-        this.phone = "+7 903 666-44-55";
-        this.email = "mail@mail.ru";
-        this.copyright = "Дмитрий Сергеев";
-        this.copyrightFrom = "2005";
+    public GeneralBlogInfo(String title, String subtitle, String phone, String email, String copyright, String copyrightFrom) {
+        this.title = title;
+        this.subtitle = subtitle;
+        this.phone = phone;
+        this.email = email;
+        this.copyright = copyright;
+        this.copyrightFrom = copyrightFrom;
     }
 
     public String getTitle() {

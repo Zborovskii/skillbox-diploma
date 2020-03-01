@@ -1,4 +1,4 @@
-package main.model.enums;
+package ru.skillbox.enums;
 
 public enum ModerationStatus {
     NEW,

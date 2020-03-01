@@ -1,10 +1,10 @@
-package main.model;
+package ru.skillbox.model;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "post_votes")
@@ -14,19 +14,17 @@ public class PostVote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private User user;
 
-    @NotNull
-    @Column(name = "post_id")
-    private int postId;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Post post;
 
     @NotNull
     @UpdateTimestamp
     @Column(name = "time")
-    private Date time;
+    private LocalDateTime time;
 
     @NotNull
-    private Byte value;
+    private int value;
 }
