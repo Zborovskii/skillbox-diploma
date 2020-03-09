@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillbox.dto.CalendarResponse;
+import ru.skillbox.dto.TagsResponse;
+import ru.skillbox.model.GeneralBlogInfo;
 import ru.skillbox.services.ResponseService;
 import ru.skillbox.services.StorageService;
 
@@ -25,7 +27,7 @@ public class ApiGeneralController {
     private StorageService storageService;
 
     @GetMapping(name = "/api/init")
-    public ResponseEntity getGeneralBlogInfo() {
+    public ResponseEntity<GeneralBlogInfo> getGeneralBlogInfo() {
 
         return new ResponseEntity(responseService.getGeneralBlogInfo(), HttpStatus.OK);
     }
@@ -41,5 +43,9 @@ public class ApiGeneralController {
                 HttpStatus.OK);
     }
 
+    @GetMapping("/api/tag")
+    public ResponseEntity<TagsResponse> getTags(@RequestParam String query) {
+        return new ResponseEntity<>(responseService.getTagsResponse(query), HttpStatus.OK);
+    }
 
 }

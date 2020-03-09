@@ -1,7 +1,14 @@
 package ru.skillbox.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.env.Environment;
+import ru.skillbox.YAMLConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +19,11 @@ import java.util.Random;
 @Service
 public class StorageService {
 
+    @Value("${getReferenceOfImagesStorage}")
+    private String getReferenceOfImagesStorage;
+
     private final String rootPath = new File("").getAbsolutePath()
+//            .concat(getReferenceOfImagesStorage);
             .concat("/src/main/java/ru/skillbox/blog_engine");
 
     public String store(MultipartFile file) {
