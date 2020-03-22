@@ -1,15 +1,11 @@
 package ru.skillbox.dto;
 
 import java.util.List;
+import lombok.Data;
 
+@Data
 public class TagsResponse {
+
     private List<TagDto> tags;
 
-    public List<TagDto> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<TagDto> tags) {
-        this.tags = tags;
-    }
 }
