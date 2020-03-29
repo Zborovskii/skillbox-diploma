@@ -3,6 +3,8 @@ package ru.skillbox.services;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,5 +53,16 @@ public class StorageService {
             .limit(randomTargetStringLength)
             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
             .toString();
+    }
+    public boolean delete(String filename) {
+        boolean result = false;
+        try {
+            result = Files.deleteIfExists(Path.of(filename));
+        } catch (NoSuchFileException e) {
+            throw new RuntimeException("No such file exists: " + filename, e);
+        } catch (IOException e) {
+            throw new RuntimeException("Invalid permissions for file: " + filename, e);
+        }
+        return result;
     }
 }

@@ -2,3 +2,4 @@ referenceOfImagesStorage: /src/main/java/ru/skillbox/blog_engine
 randomLeftLimit: 48
 randomRightLimit: 122
 randomTargetStringLength: 10
+

@@ -1,13 +1,18 @@
 package ru.skillbox.mappers;
 
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-import ru.skillbox.dto.*;
+import ru.skillbox.dto.CommentDto;
+import ru.skillbox.dto.PlainPostDto;
+import ru.skillbox.dto.PostWithCommentsResponse;
+import ru.skillbox.dto.TagDto;
+import ru.skillbox.dto.UserAdditionalInfoDto;
+import ru.skillbox.dto.UserDto;
+import ru.skillbox.dto.UserWithPhotoDto;
 import ru.skillbox.model.Post;
 import ru.skillbox.model.PostComment;
 import ru.skillbox.model.Tag;
 import ru.skillbox.model.User;
-
-import java.util.stream.Collectors;
 
 @Service
 public class EntityMapper {
@@ -88,5 +93,22 @@ public class EntityMapper {
         tagDto.setName(tag.getName());
         tagDto.setWeight((double) (tag.getPosts().size() / activePostsCount));
         return tagDto;
+    }
+
+
+    public UserAdditionalInfoDto getAuthorizedUserDTO(User user) {
+        UserAdditionalInfoDto authorizedUser = new UserAdditionalInfoDto();
+
+        if (user == null) {
+            return authorizedUser;
+        }
+
+        authorizedUser.setId(user.getId());
+        authorizedUser.setName(user.getName());
+        authorizedUser.setPhoto(user.getPhoto());
+        authorizedUser.setEmail(user.getEmail());
+        authorizedUser.setModeration(user.getIsModerator());
+
+        return authorizedUser;
     }
 }
