@@ -1,9 +1,10 @@
 package ru.skillbox.controllers;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.dto.PostModerationStatus;
 import ru.skillbox.dto.PostRequest;
 import ru.skillbox.dto.PostWithCommentsResponse;
 import ru.skillbox.dto.PostsResponse;
 import ru.skillbox.dto.ResultResponse;
 import ru.skillbox.enums.ModerationStatus;
+import ru.skillbox.enums.PostModerationStatus;
 import ru.skillbox.enums.SortMode;
 import ru.skillbox.enums.Vote;
 import ru.skillbox.services.ResponseService;
@@ -26,7 +27,6 @@ import ru.skillbox.services.ResponseService;
 @RestController
 @RequestMapping("/api/post")
 public class ApiPostController {
-    DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Autowired
     private ResponseService responseService;
@@ -36,17 +36,15 @@ public class ApiPostController {
         @RequestParam Integer offset,
         @RequestParam Integer limit,
         @RequestParam String query) {
-        return responseService.getPostsResponse(offset, limit, null, query, null,
-                                                null, null, null, true);
+        return responseService.getPostsByQuery(offset, limit, query);
     }
 
     @GetMapping("/byDate")
     public ResponseEntity<PostsResponse> getPostsByDate(
         @RequestParam Integer offset,
         @RequestParam Integer limit,
-        @RequestParam String date) {
-        return responseService.getPostsResponse(offset, limit, null, null,
-                                                LocalDateTime.parse(date, DATE_FORMATTER), null, null, null, true);
+        @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+        return responseService.getPostsByDate(offset, limit, date);
     }
 
     @GetMapping("")
@@ -54,8 +52,7 @@ public class ApiPostController {
         @RequestParam Integer offset,
         @RequestParam Integer limit,
         @RequestParam SortMode mode) {
-        return responseService.getPostsResponse(offset, limit, mode, null, null,
-                                                null, null, null, true);
+        return responseService.getPosts(offset, limit, mode);
     }
 
     @GetMapping("/byTag")
@@ -63,8 +60,7 @@ public class ApiPostController {
         @RequestParam Integer offset,
         @RequestParam Integer limit,
         @RequestParam String tag) {
-        return responseService.getPostsResponse(offset, limit, null, null,
-                                                null, tag, null, null, true);
+        return responseService.getPostsByTag(offset, limit, tag);
     }
 
     @GetMapping("/moderation")
@@ -98,7 +94,7 @@ public class ApiPostController {
 
     @PostMapping("/{vote}")
     public ResponseEntity<ResultResponse> votePost(@PathVariable Vote vote, @RequestBody Map<String, Integer> body) {
-        return responseService.votePost(vote,  body.getOrDefault("post_id", 0));
+        return responseService.votePost(vote, body.getOrDefault("post_id", 0));
     }
 
     @GetMapping("/{id}")

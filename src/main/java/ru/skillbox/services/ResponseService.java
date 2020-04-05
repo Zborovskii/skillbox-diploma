@@ -1,6 +1,8 @@
 package ru.skillbox.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -20,7 +22,6 @@ import ru.skillbox.dto.ModerationRequest;
 import ru.skillbox.dto.NewCommentRequest;
 import ru.skillbox.dto.PasswordResetRequest;
 import ru.skillbox.dto.PlainPostDto;
-import ru.skillbox.dto.PostModerationStatus;
 import ru.skillbox.dto.PostRequest;
 import ru.skillbox.dto.PostWithCommentsResponse;
 import ru.skillbox.dto.PostsResponse;
@@ -29,6 +30,7 @@ import ru.skillbox.dto.ResultResponse;
 import ru.skillbox.dto.TagDto;
 import ru.skillbox.dto.TagsResponse;
 import ru.skillbox.enums.ModerationStatus;
+import ru.skillbox.enums.PostModerationStatus;
 import ru.skillbox.enums.SortMode;
 import ru.skillbox.enums.Vote;
 import ru.skillbox.mappers.EntityMapper;
@@ -57,7 +59,7 @@ public class ResponseService {
     private CommentsService commentsService;
 
     public CalendarResponse getCalendarResponse(LocalDateTime year) {
-        List<Post> allPostList = postService.getAllPostsFromRepository(true, ModerationStatus.ACCEPTED);
+        List<Post> allPostList = postService.getPosts();
         List<Post> postList = postService.searchByDate(allPostList, year, LocalDateTime.now());
         Map<String, Long> postsCountPerYear = postList.stream()
             .collect(Collectors.groupingBy(p -> p.getTime().toString().split(" ")[0],
@@ -73,13 +75,15 @@ public class ResponseService {
     }
 
     public GeneralBlogInfo getGeneralBlogInfo() {
+        GeneralBlogInfo response = new GeneralBlogInfo();
+        response.setCopyright("Дмитрий Сергеев");
+        response.setCopyrightFrom("2005");
+        response.setEmail("mail@mail.ru");
+        response.setPhone("+7 903 666-44-55");
+        response.setSubtitle("Рассказы разработчиков");
+        response.setTitle("DevPub");
 
-        return new GeneralBlogInfo("DevPub",
-                                   "Рассказы разработчиков",
-                                   "+7 903 666-44-55",
-                                   "mail@mail.ru",
-                                   "Дмитрий Сергеев",
-                                   "2005");
+        return response;
     }
 
     public TagsResponse getTagsResponse(String tagQuery) {
@@ -89,37 +93,58 @@ public class ResponseService {
         return tagsResponse;
     }
 
-    public ResponseEntity<PostsResponse> getPostsResponse(Integer offset,
-                                                          Integer limit,
-                                                          SortMode sortMode,
-                                                          String searchQuery,
-                                                          LocalDateTime ldt,
-                                                          String tag,
-                                                          User user,
-                                                          ModerationStatus status,
-                                                          Boolean isActive) {
-        status = status == null ? ModerationStatus.ACCEPTED : status;
-        List<Post> postList = postService.getAllPostsFromRepository(isActive, status);
-        if (searchQuery != null) {
-            postList = postService.searchByQuery(postList, searchQuery);
-        }
-        if (ldt != null) {
-            LocalDateTime dateTo = ldt.plusDays(1).minusSeconds(1);
-            postList = postService.searchByDate(postList, ldt, dateTo);
-        }
-        if (tag != null) {
-            postList = postService.searchByTag(postList, tag);
-        }
-        if (user != null) {
-            postList = postService.searchByUser(postList, user);
-        }
-        List<PlainPostDto> plainPostDtoList = postList.stream()
+    public ResponseEntity<PostsResponse> getPostsByQuery(Integer offset, Integer limit, String searchQuery) {
+
+        List<PlainPostDto> posts = postService.getPostsByQuery(searchQuery).stream()
             .map(entityMapper::postToPlainPostDto)
             .collect(Collectors.toList());
-        if (sortMode != null) {
-            plainPostDtoList = sortPlainPostDtoListByMode(plainPostDtoList, sortMode);
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PostsResponse> getPostsByDate(Integer offset, Integer limit, LocalDate date) {
+
+        List<PlainPostDto> posts = postService.getPostsByDate(LocalDateTime.of(date, LocalTime.MIDNIGHT)).stream()
+            .map(entityMapper::postToPlainPostDto)
+            .collect(Collectors.toList());
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PostsResponse> getPosts(Integer offset, Integer limit, SortMode mode) {
+
+        List<PlainPostDto> posts = postService.getPosts().stream()
+            .map(entityMapper::postToPlainPostDto)
+            .collect(Collectors.toList());
+        if (mode != null) {
+            posts = sortPlainPostDtoListByMode(posts, mode);
         }
-        return new ResponseEntity<>(formPostsResponse(offset, limit, plainPostDtoList), HttpStatus.OK);
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PostsResponse> getPostsByTag(Integer offset, Integer limit, String tag) {
+
+        List<PlainPostDto> posts = postService.searchByTag(postService.getPosts(), tag).stream()
+            .map(entityMapper::postToPlainPostDto)
+            .collect(Collectors.toList());
+
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PostsResponse> getPostsByModeration(Integer offset, Integer limit, User user,
+                                                              ModerationStatus status) {
+
+        List<PlainPostDto> posts = postService.getPostsByModerationStatus(user, status).stream()
+            .map(entityMapper::postToPlainPostDto)
+            .collect(Collectors.toList());
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
+    }
+
+    public ResponseEntity<PostsResponse> getMyPosts(Integer offset, Integer limit, User user,
+                                                    ModerationStatus status, Boolean isActive) {
+
+        List<PlainPostDto> posts = postService.getMyPosts(user, status, isActive).stream()
+            .map(entityMapper::postToPlainPostDto)
+            .collect(Collectors.toList());
+        return new ResponseEntity<>(formPostsResponse(offset, limit, posts), HttpStatus.OK);
     }
 
     private List<PlainPostDto> sortPlainPostDtoListByMode(List<PlainPostDto> list, SortMode mode) {
@@ -222,7 +247,7 @@ public class ResponseService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<AuthResponse> getAuthorizedUserResponse(){
+    public ResponseEntity<AuthResponse> getAuthorizedUserResponse() {
         if (authService.getAuthorizedUser().isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
@@ -257,10 +282,8 @@ public class ResponseService {
         if (!authorizedUser.getIsModerator()) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
-        return getPostsResponse(offset, limit, null, null, null,
-                                null, authorizedUser, status, true);
+        return getPostsByModeration(offset, limit, authorizedUser, status);
     }
-
 
     public ResponseEntity<ResultResponse> addNewPost(PostRequest request) {
         Optional<User> userOptional = authService.getAuthorizedUser();
@@ -303,8 +326,7 @@ public class ResponseService {
         }
         User authorizedUser = userOptional.get();
         status = status == null ? PostModerationStatus.PUBLISHED : status;
-        return getPostsResponse(offset, limit, null, null, null,
-                                null, authorizedUser, status.getModerationStatus(), status.isActive());
+        return getMyPosts(offset, limit, authorizedUser, status.getModerationStatus(), status.isActive());
     }
 
     public ResponseEntity<ResultResponse> votePost(Vote vote, Integer postId) {

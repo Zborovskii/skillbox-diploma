@@ -70,13 +70,14 @@ public class EntityMapper {
         plainPostDto.setViewCount(post.getViewCount());
         plainPostDto.setTime(post.getTime());
         plainPostDto.setUser(userToUserDto(post.getUser()));
-        plainPostDto.setAnnounce(post.getText().substring(0, 150) + "...");
+        String announce = post.getText().length() > 150 ? post.getText().substring(0, 150) + "..." : post.getText();
+        plainPostDto.setAnnounce(announce);
         plainPostDto.setDislikeCount(post.getPostVotes().stream()
-                .filter(item -> item.getValue() < 0)
-                .count());
+                                         .filter(item -> item.getValue() < 0)
+                                         .count());
         plainPostDto.setLikeCount(post.getPostVotes().stream()
-                .filter(item -> item.getValue() > 0)
-                .count());
+                                      .filter(item -> item.getValue() > 0)
+                                      .count());
 
         return plainPostDto;
     }

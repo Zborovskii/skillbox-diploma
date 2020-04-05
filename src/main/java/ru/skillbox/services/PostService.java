@@ -1,9 +1,6 @@
 package ru.skillbox.services;
 
-import static ru.skillbox.enums.ModerationStatus.ACCEPTED;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,31 +26,30 @@ public class PostService {
     @Autowired
     private TagService tagService;
 
-    public List<Post> getAllPostsFromRepository(boolean isActive, ModerationStatus moderationStatus) {
-        List<Post> postList = new ArrayList<>();
-        postRepository.findAll().forEach(postList::add);
-        if (isActive) {
-            postList = postList.stream().filter(p -> p.getIsActive() &&
-                moderationStatus.equals(p.getModerationStatus()) &&
-                p.getTime().isBefore(LocalDateTime.now()))
-                .collect(Collectors.toList());
-        }
-        return postList;
+    public List<Post> getPostsByQuery(String searchQuery) {
+        return postRepository.findPostsByQuery(searchQuery);
+    }
+
+    public List<Post> getPostsByDate(LocalDateTime date) {
+        return postRepository.findPostsByDate(date, date.plusDays(1).minusSeconds(1));
+    }
+
+    public List<Post> getPosts() {
+        return postRepository.findPosts();
+    }
+
+    public List<Post> getPostsByModerationStatus(User user, ModerationStatus moderationStatus) {
+        return postRepository.findPostsByModerationStatus(user, moderationStatus);
+    }
+
+    public List<Post> getMyPosts(User user, ModerationStatus moderationStatus, Boolean isActive) {
+        return postRepository.findMyPosts(user, moderationStatus, isActive);
     }
 
     public List<Post> searchByDate(List<Post> list, LocalDateTime dateFrom, LocalDateTime dateTo) {
         return list.stream()
             .filter(post -> post.getTime().isAfter(dateFrom) &&
                 post.getTime().isBefore(dateTo))
-            .collect(Collectors.toList());
-    }
-
-    public List<Post> searchByQuery(List<Post> list, String query) {
-        if (query == null || "".equals(query)) {
-            return list;
-        }
-        return list.stream()
-            .filter(post -> post.getTitle().contains(query) || post.getText().contains(query))
             .collect(Collectors.toList());
     }
 
@@ -66,10 +62,8 @@ public class PostService {
     }
 
     public PostWithCommentsResponse getPostWithCommentsById(Integer id) {
-        return postRepository.findById(id)
-            .filter(p -> p.getIsActive() &&
-                ACCEPTED.equals(p.getModerationStatus()) &&
-                p.getTime().isBefore(LocalDateTime.now()))
+
+        return Optional.ofNullable(postRepository.findPostsByById(id))
             .map(entityMapper::postToPostWithCommentsDto)
             .orElse(null);
     }
@@ -86,12 +80,6 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public List<Post> searchByUser(List<Post> list, User user) {
-        return list.stream()
-            .filter(post -> post.getUser().equals(user))
-            .collect(Collectors.toList());
-    }
-
     public Integer countByUser(User user) {
         return postRepository.countByUser(user);
     }
@@ -105,7 +93,6 @@ public class PostService {
     public String getFirstPostDate(User user) {
         return postRepository.getFirstPostDateByUser(user);
     }
-
 
     public Post savePost(Post post, PostRequest postData, User editor) {
         final Post postToSave = (post == null) ? new Post() : post;

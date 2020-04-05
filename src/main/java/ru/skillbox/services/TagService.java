@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.skillbox.dto.TagDto;
-import ru.skillbox.enums.ModerationStatus;
 import ru.skillbox.mappers.EntityMapper;
 import ru.skillbox.model.Post;
 import ru.skillbox.model.Tag;
@@ -28,7 +27,7 @@ public class TagService {
     }
 
     public List<TagDto> getAllTagDtoList() {
-        List<Post> allPostList = postService.getAllPostsFromRepository(true, ModerationStatus.ACCEPTED);
+        List<Post> allPostList = postService.getPosts();
         List<Tag> allTagList = getAllTagsFromRepository();
         return allTagList.stream()
             .map(tag -> entityMapper.tagToTagDto(tag, allPostList.size()))

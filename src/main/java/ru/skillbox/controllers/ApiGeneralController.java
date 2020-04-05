@@ -21,6 +21,7 @@ import ru.skillbox.dto.SettingsValues;
 import ru.skillbox.dto.StatisticsDto;
 import ru.skillbox.dto.TagsResponse;
 import ru.skillbox.enums.StatisticsType;
+import ru.skillbox.model.GeneralBlogInfo;
 import ru.skillbox.model.User;
 import ru.skillbox.services.AuthService;
 import ru.skillbox.services.ResponseService;
@@ -44,11 +45,6 @@ public class ApiGeneralController {
     @Autowired
     private StatisticsService statisticsService;
 
-//    @GetMapping(name = "/api/init")
-//    public ResponseEntity<GeneralBlogInfo> getGeneralBlogInfo() {
-//        return new ResponseEntity(responseService.getGeneralBlogInfo(), HttpStatus.OK);
-//    }
-
     @PostMapping("/api/image")
     public ResponseEntity<String> postImage(@RequestParam("image") MultipartFile image) {
         return new ResponseEntity<>(storageService.store(image), HttpStatus.OK);
@@ -61,7 +57,7 @@ public class ApiGeneralController {
     }
 
     @GetMapping("/api/tag")
-    public ResponseEntity<TagsResponse> getTags(@RequestParam String query) {
+    public ResponseEntity<TagsResponse> getTags(@RequestParam(required = false) String query) {
         return new ResponseEntity<>(responseService.getTagsResponse(query), HttpStatus.OK);
     }
 
@@ -103,5 +99,11 @@ public class ApiGeneralController {
             return new ResponseEntity<>(statisticsService.getStatistics(null), HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping("/api/init")
+    public ResponseEntity<GeneralBlogInfo> getApiInit() {
+
+        return new ResponseEntity<>(responseService.getGeneralBlogInfo(), HttpStatus.OK);
     }
 }
