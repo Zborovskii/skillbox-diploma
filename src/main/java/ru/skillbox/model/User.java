@@ -22,6 +22,7 @@ import org.hibernate.annotations.Type;
 @EqualsAndHashCode(of = {"id"})
 @ToString(callSuper = true, of = {"name"})
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -38,8 +39,8 @@ public class User {
     private String password;
     private String code;
 
-    @Column(length = 65535, columnDefinition="TEXT")
-    @Type(type="text")
+    @Column(length = 65535, columnDefinition = "TEXT")
+    @Type(type = "text")
     private String photo;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)

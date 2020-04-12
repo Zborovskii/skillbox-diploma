@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AuthorizeUserRequest {
+
     @JsonProperty(value = "e_mail")
     private String email;
     private String password;

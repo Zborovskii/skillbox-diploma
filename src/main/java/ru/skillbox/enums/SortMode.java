@@ -9,6 +9,7 @@ public enum SortMode {
     EARLY;
 
     public static class StringToEnumConverter implements Converter<String, SortMode> {
+
         @Override
         public SortMode convert(String sortMode) {
             return SortMode.valueOf(sortMode.toUpperCase());

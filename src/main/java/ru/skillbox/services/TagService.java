@@ -13,6 +13,7 @@ import ru.skillbox.repository.TagRepository;
 
 @Service
 public class TagService {
+
     @Autowired
     private TagRepository tagRepository;
     @Autowired
@@ -36,8 +37,8 @@ public class TagService {
 
     public List<TagDto> getTagDtoListByQuery(String query) {
         return getAllTagDtoList().stream()
-                .filter(tag -> tag.getName().toLowerCase().startsWith(query.toLowerCase()))
-                .collect(Collectors.toList());
+            .filter(tag -> tag.getName().toLowerCase().startsWith(query.toLowerCase()))
+            .collect(Collectors.toList());
     }
 
     public Tag saveTag(String tagName) {

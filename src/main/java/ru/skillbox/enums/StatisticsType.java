@@ -7,11 +7,13 @@ public enum StatisticsType {
     MY("my");
 
     private final String name;
+
     StatisticsType(String name) {
         this.name = name;
     }
 
     public static class StringToEnumConverter implements Converter<String, StatisticsType> {
+
         @Override
         public StatisticsType convert(String s) {
             return StatisticsType.valueOf(s.toUpperCase());

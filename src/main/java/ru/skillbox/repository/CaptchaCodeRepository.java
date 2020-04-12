@@ -10,6 +10,7 @@ import ru.skillbox.model.CaptchaCode;
 @Repository
 @Transactional
 public interface CaptchaCodeRepository extends CrudRepository<CaptchaCode, Long> {
+
     @Modifying
     void deleteByTime(LocalDateTime localDateTime);
 

@@ -27,6 +27,7 @@ import ru.skillbox.enums.ModerationStatus;
 @ToString(callSuper = true, of = {"title"})
 @Table(name = "posts")
 public class Post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -40,11 +41,11 @@ public class Post {
     private ModerationStatus moderationStatus;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", referencedColumnName="id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "moderator_id", referencedColumnName="id")
+    @JoinColumn(name = "moderator_id", referencedColumnName = "id")
     private User moderatedBy;
 
     private LocalDateTime time;

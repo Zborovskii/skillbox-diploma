@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class NewCommentRequest {
+
     @JsonProperty("parent_id")
     private Integer parentId;
 

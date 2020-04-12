@@ -11,6 +11,7 @@ import ru.skillbox.model.User;
 
 @Repository
 public interface VotesRepository extends CrudRepository<PostVote, Integer> {
+
     List<PostVote> findByPostAndValue(Post post, byte value);
 
     PostVote findByUserAndPost(User user, Post post);

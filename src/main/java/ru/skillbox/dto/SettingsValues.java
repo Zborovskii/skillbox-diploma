@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class SettingsValues {
+
     @JsonProperty("MULTIUSER_MODE")
     private Boolean multiuserMode;
 

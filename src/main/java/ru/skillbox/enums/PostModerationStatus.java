@@ -21,6 +21,7 @@ public enum PostModerationStatus {
     }
 
     public static class StringToEnumConverter implements Converter<String, PostModerationStatus> {
+
         @Override
         public PostModerationStatus convert(String source) {
             return PostModerationStatus.valueOf(source.toUpperCase());

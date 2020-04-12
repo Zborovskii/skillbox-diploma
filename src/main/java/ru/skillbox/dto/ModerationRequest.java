@@ -9,6 +9,7 @@ public class ModerationRequest {
 
     @JsonProperty(value = "post_id")
     private Integer postId;
+
     private Decision decision;
 
 }

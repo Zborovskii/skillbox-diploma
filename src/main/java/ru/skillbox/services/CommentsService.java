@@ -11,6 +11,7 @@ import ru.skillbox.repository.CommentsRepository;
 
 @Service
 public class CommentsService {
+
     @Autowired
     private CommentsRepository commentsRepository;
 

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AppConfig {
+
     private final Map<String, Integer> sessions = new HashMap<>();
     private final Captcha captcha = new Captcha();
-
 
     public void addSession(String sessionId, Integer userId) {
         sessions.put(sessionId, userId);
@@ -33,6 +33,7 @@ public class AppConfig {
 
     @Data
     public static class Captcha {
+
         private Integer codeLength = 5;
         private Integer hoursToBeUpdated = 1;
     }

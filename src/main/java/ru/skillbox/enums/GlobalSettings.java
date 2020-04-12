@@ -1,14 +1,17 @@
 package ru.skillbox.enums;
 
 public class GlobalSettings {
+
     public enum Code {
         MULTIUSER_MODE("Многопользовательский режим"),
         POST_PREMODERATION("Премодерация постов"),
         STATISTICS_IS_PUBLIC("Показывать всем статистику блога");
         private final String name;
+
         Code(String name) {
             this.name = name;
         }
+
         public String getName() {
             return name;
         }
@@ -19,7 +22,8 @@ public class GlobalSettings {
         NO("Нет", false);
         private final String name;
         private final Boolean value;
-        Value (String name, Boolean value) {
+
+        Value(String name, Boolean value) {
             this.name = name;
             this.value = value;
         }
@@ -32,5 +36,4 @@ public class GlobalSettings {
             return value;
         }
     }
-
 }

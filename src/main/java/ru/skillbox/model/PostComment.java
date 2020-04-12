@@ -17,6 +17,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "post_comments")
 public class PostComment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -33,8 +34,8 @@ public class PostComment {
 
     private LocalDateTime time;
 
-    @Column(length = 65535, columnDefinition="TEXT")
-    @Type(type="text")
+    @Column(length = 65535, columnDefinition = "TEXT")
+    @Type(type = "text")
     private String text;
 
 }

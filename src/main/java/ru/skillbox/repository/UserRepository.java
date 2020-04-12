@@ -9,7 +9,10 @@ import ru.skillbox.model.User;
 public interface UserRepository extends CrudRepository<User, Integer> {
 
     List<User> findByIsModeratorTrue();
+
     List<User> findByIsModeratorFalse();
+
     User findByEmail(String email);
+
     User findByCode(String code);
 }

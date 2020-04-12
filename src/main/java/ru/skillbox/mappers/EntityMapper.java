@@ -46,17 +46,17 @@ public class EntityMapper {
         postWithCommentsResponse.setUser(userToUserDto(post.getUser()));
 
         postWithCommentsResponse.setComments(post.getPostComments().stream()
-                .map(this::psotCommentToCommentDto)
-                .collect(Collectors.toList()));
+                                                 .map(this::psotCommentToCommentDto)
+                                                 .collect(Collectors.toList()));
         postWithCommentsResponse.setTags(post.getTags().stream()
-                .map(Tag::getName)
-                .collect(Collectors.toList()));
+                                             .map(Tag::getName)
+                                             .collect(Collectors.toList()));
         postWithCommentsResponse.setLikeCount(post.getPostVotes().stream()
-                .filter(item -> item.getValue() > 0)
-                .count());
+                                                  .filter(item -> item.getValue() > 0)
+                                                  .count());
         postWithCommentsResponse.setDislikeCount(post.getPostVotes().stream()
-                .filter(item -> item.getValue() < 0)
-                .count());
+                                                     .filter(item -> item.getValue() < 0)
+                                                     .count());
 
         return postWithCommentsResponse;
     }
@@ -95,7 +95,6 @@ public class EntityMapper {
         tagDto.setWeight((double) (tag.getPosts().size() / activePostsCount));
         return tagDto;
     }
-
 
     public UserAdditionalInfoDto getAuthorizedUserDTO(User user) {
         UserAdditionalInfoDto authorizedUser = new UserAdditionalInfoDto();

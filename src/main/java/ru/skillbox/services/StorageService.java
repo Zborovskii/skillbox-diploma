@@ -54,6 +54,15 @@ public class StorageService {
             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
             .toString();
     }
+
+    public byte[] getImage(Path path) {
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public boolean delete(String filename) {
         boolean result = false;
         try {

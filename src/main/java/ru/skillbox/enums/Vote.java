@@ -7,6 +7,7 @@ public enum Vote {
     DISLIKE;
 
     public static class StringToEnumConverter implements Converter<String, Vote> {
+
         @Override
         public Vote convert(String s) {
             return Vote.valueOf(s.toUpperCase());

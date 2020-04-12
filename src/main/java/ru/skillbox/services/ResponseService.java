@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,9 +59,22 @@ public class ResponseService {
     @Autowired
     private CommentsService commentsService;
 
-    public CalendarResponse getCalendarResponse(LocalDateTime year) {
+    public CalendarResponse getCalendarResponse(Integer year) {
+        LocalDateTime currentYear = LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 00, 00, 00);
+        LocalDateTime userInputYear;
+
+        if (year == null) {
+            userInputYear = currentYear;
+        } else {
+            try {
+                userInputYear = LocalDateTime.of(year, 1, 1, 00, 00, 00);
+            } catch (Exception ex) {
+                userInputYear = currentYear;
+            }
+        }
+
         List<Post> allPostList = postService.getPosts();
-        List<Post> postList = postService.searchByDate(allPostList, year, LocalDateTime.now());
+        List<Post> postList = postService.searchByDate(allPostList, userInputYear, LocalDateTime.now());
         Map<String, Long> postsCountPerYear = postList.stream()
             .collect(Collectors.groupingBy(p -> p.getTime().toString().split(" ")[0],
                                            Collectors.counting()));
@@ -213,20 +227,33 @@ public class ResponseService {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    public ResponseEntity<AuthResponse> login(AuthorizeUserRequest user) {
+    public ResponseEntity<AuthResponse> login(AuthorizeUserRequest authorizeUserRequest) {
         AuthResponse response = new AuthResponse();
-        User userFromDB = authService.loginUser(user);
-        if (!authService.isValidPassword(user.getPassword(), userFromDB.getPassword())) {
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-        }
-        response.setUser(entityMapper.getAuthorizedUserDTO(userFromDB));
-        response.setResult(true);
+        User userFromDB = authService.loginUser(authorizeUserRequest);
+        boolean result = userFromDB != null;
 
+        if (result) {
+            if (!authService.isValidPassword(authorizeUserRequest.getPassword(), userFromDB.getPassword())) {
+                return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+            }
+            response.setUser(entityMapper.getAuthorizedUserDTO(userFromDB));
+        }
+        response.setResult(result);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<AuthResponse> registerUser(RegisterUserRequest request) {
         AuthResponse response = new AuthResponse();
+        if (request.getName() == null) {
+            request.setName(request.getEmail().substring(0, request.getEmail().indexOf("@")));
+        }
+        Map<String, Object> errors = validateUserInputAndGetErrors(request);
+        boolean result = errors.size() == 0;
+        response.setResult(result);
+        if (!result) {
+            response.setErrors(errors);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         response.setUser(entityMapper.getAuthorizedUserDTO(authService.registerUser(request)));
         response.setResult(true);
 
@@ -376,5 +403,27 @@ public class ResponseService {
             result.setResult(false);
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    private Map<String, Object> validateUserInputAndGetErrors(RegisterUserRequest user) {
+        final String email = user.getEmail();
+
+        final String password = user.getPassword();
+        final String captcha = user.getCaptcha();
+        final String captchaSecretCode = user.getCaptchaSecret();
+
+        Map<String, Object> errors = new HashMap<>();
+        User userFromDB = authService.findUserByEmail(email);
+
+        if (userFromDB != null) {
+            errors.put("email", "Этот адрес уже зарегистрирован.");
+        }
+        if (password == null || password.length() < 6) {
+            errors.put("password", "Пароль короче 6 символов");
+        }
+        if (!captchaCodeService.isValidCaptcha(captcha, captchaSecretCode)) {
+            errors.put("captcha", "Код с картинки введен неверно.");
+        }
+        return errors;
     }
 }

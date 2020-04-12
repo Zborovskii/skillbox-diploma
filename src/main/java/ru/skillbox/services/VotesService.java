@@ -11,6 +11,7 @@ import ru.skillbox.repository.VotesRepository;
 
 @Service
 public class VotesService {
+
     @Autowired
     private VotesRepository votesRepository;
 

@@ -29,10 +29,11 @@ public class AuthService {
 
     public User loginUser(AuthorizeUserRequest user) {
         final String email = user.getEmail();
-        final String password = user.getPassword();
         User userFromDB = userRepository.findByEmail(email);
-        final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        appConfig.addSession(sessionId, userFromDB.getId());
+        if (userFromDB != null) {
+            final String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+            appConfig.addSession(sessionId, userFromDB.getId());
+        }
         return userFromDB;
     }
 
@@ -100,5 +101,9 @@ public class AuthService {
 
     public boolean isValidPassword(String passwordFromForm, String passwordFromDb) {
         return passwordFromForm.equals(passwordFromDb);
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
