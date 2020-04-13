@@ -1,5 +1,6 @@
-spring.datasource.url: jdbc:mysql://93.186.255.195:3306/dip_zbor?createDatabaseIfNotExist=true&serverTimezone=UTC&useSSL
+spring.datasource.url: jdbc:${CLEARDB_DATABASE_URL:mysql://93.186.255.195:3306/dip_zbor}?createDatabaseIfNotExist=true&serverTimezone=UTC&useSSL
   =false
+server.port: ${PORT:8080}
 spring.datasource.username: dip_zbor
 spring.datasource.password: DCRB9zzhH99WkXqX
 spring.jpa.properties.hibernate.default_schema: dip_zbor
