@@ -1,0 +1,5 @@
+referenceOfImagesStorage: /src/main/resources/images
+randomLeftLimit: 48
+randomRightLimit: 122
+randomTargetStringLength: 10
+
