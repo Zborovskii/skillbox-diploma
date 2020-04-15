@@ -90,11 +90,11 @@ public class ResponseService {
 
     public GeneralBlogInfo getGeneralBlogInfo() {
         GeneralBlogInfo response = new GeneralBlogInfo();
-        response.setCopyright("Дмитрий Сергеев");
-        response.setCopyrightFrom("2005");
-        response.setEmail("mail@mail.ru");
-        response.setPhone("+7 903 666-44-55");
-        response.setSubtitle("Рассказы разработчиков");
+        response.setCopyright("Зборовский Александр");
+        response.setCopyrightFrom("2020");
+        response.setEmail("shum-127127@mail.ru");
+        response.setPhone("+7 910 666-44-55");
+        response.setSubtitle("Blog engine");
         response.setTitle("DevPub");
 
         return response;

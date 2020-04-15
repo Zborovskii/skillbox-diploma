@@ -1,8 +1,8 @@
 spring.datasource.url: jdbc:${CLEARDB_BLUE_URL:mysql://93.186.255.195:3306/dip_zbor?createDatabaseIfNotExist=true&serverTimezone=UTC&useSSL
   =false}
 server.port: ${PORT:8080}
-spring.datasource.username: dip_zbor
-spring.datasource.password: DCRB9zzhH99WkXqX
+spring.datasource.username: ${USER_NAME}
+spring.datasource.password: ${PASSWORD}
 spring.jpa.properties.hibernate.default_schema: dip_zbor
 spring.jpa.properties.hibernate.format_sql: true
 spring.jpa.hibernate.ddl-auto: update
