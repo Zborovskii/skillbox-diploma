@@ -59,24 +59,18 @@ public class ResponseService {
     @Autowired
     private CommentsService commentsService;
 
-    public CalendarResponse getCalendarResponse(Integer year) {
-        LocalDateTime currentYear = LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 00, 00, 00);
-        LocalDateTime userInputYear;
+    public CalendarResponse getCalendarResponse(String year) {
 
-        if (year == null) {
-            userInputYear = currentYear;
-        } else {
-            try {
-                userInputYear = LocalDateTime.of(year, 1, 1, 00, 00, 00);
-            } catch (Exception ex) {
-                userInputYear = currentYear;
-            }
+        Integer currentYear = LocalDate.now().getYear();
+        LocalDateTime ldt = LocalDateTime.of(LocalDate.of(currentYear, 1, 1),
+                                             LocalTime.MIDNIGHT);
+        if (year != null) {
+            ldt = ldt.withYear(Integer.parseInt(year));
         }
-
         List<Post> allPostList = postService.getPosts();
-        List<Post> postList = postService.searchByDate(allPostList, userInputYear, LocalDateTime.now());
+        List<Post> postList = postService.searchByDate(allPostList, ldt, LocalDateTime.now());
         Map<String, Long> postsCountPerYear = postList.stream()
-            .collect(Collectors.groupingBy(p -> p.getTime().toString().split(" ")[0],
+            .collect(Collectors.groupingBy(p -> p.getTime().toString().split("T")[0],
                                            Collectors.counting()));
         List<Integer> postYears = postList.stream()
             .map(p -> p.getTime().getYear())
