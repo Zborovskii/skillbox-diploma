@@ -45,6 +45,7 @@ public class AuthService {
         newUser.setPassword(request.getPassword());
         newUser.setRegTime(LocalDateTime.now());
         newUser.setIsModerator(false);
+        newUser.setPhoto("/upload/default/default/default");
         userRepository.save(newUser);
 
         return newUser;

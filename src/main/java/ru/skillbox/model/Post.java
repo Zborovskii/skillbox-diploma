@@ -69,4 +69,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<PostComment> postComments;
 
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 }

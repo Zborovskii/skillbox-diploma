@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,7 @@ import ru.skillbox.model.GeneralBlogInfo;
 import ru.skillbox.model.Post;
 import ru.skillbox.model.PostComment;
 import ru.skillbox.model.User;
+import ru.skillbox.repository.PostRepository;
 
 @Service
 public class ResponseService {
@@ -58,6 +60,8 @@ public class ResponseService {
     private VotesService votesService;
     @Autowired
     private CommentsService commentsService;
+    @Autowired
+    private PostRepository postRepository;
 
     public CalendarResponse getCalendarResponse(String year) {
 
@@ -72,9 +76,9 @@ public class ResponseService {
         Map<String, Long> postsCountPerYear = postList.stream()
             .collect(Collectors.groupingBy(p -> p.getTime().toString().split("T")[0],
                                            Collectors.counting()));
-        List<Integer> postYears = postList.stream()
+        Set<Integer> postYears = postList.stream()
             .map(p -> p.getTime().getYear())
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
         CalendarResponse calendarResponse = new CalendarResponse();
         calendarResponse.setYears(postYears);
         calendarResponse.setPosts(postsCountPerYear);
@@ -188,11 +192,18 @@ public class ResponseService {
     }
 
     public ResponseEntity<PostWithCommentsResponse> getPostWithCommentsResponse(Integer id) {
-        PostWithCommentsResponse postWithCommentsResponse = postService.getPostWithCommentsById(id);
-        if (postWithCommentsResponse == null) {
+        Optional<Post> postOptional = postRepository.findById(id);
+
+        if (postOptional.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(postWithCommentsResponse, HttpStatus.OK);
+
+        Post post = postOptional.get();
+        PostWithCommentsResponse result = entityMapper.postToPostWithCommentsDto(post);
+
+        post.incrementViewCount();
+        postRepository.save(post);
+        return ResponseEntity.ok(result);
     }
 
     public ResponseEntity<ResultResponse> moderate(ModerationRequest moderationRequest) {

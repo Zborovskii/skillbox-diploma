@@ -34,7 +34,9 @@ public class ApiGeneralController {
     @Autowired
     @Value("${spring.image.reference}")
     private String IMAGE_REFERENCE;
-
+    @Autowired
+    @Value("${spring.image.reference.default}")
+    private String IMAGE_REFERENCE_DEFAULT;
     @Autowired
     private ResponseService responseService;
     @Autowired
@@ -54,8 +56,16 @@ public class ApiGeneralController {
     byte[] getImage(@PathVariable String path1,
                     @PathVariable String path2,
                     @PathVariable String fileName) {
-        String route = new File("").getAbsolutePath()
-            .concat(IMAGE_REFERENCE + path1 + "/" + path2 + "/" + fileName);
+        String route;
+
+        if (path1.equals("default")) {
+            route = new File("").getAbsolutePath()
+                .concat(IMAGE_REFERENCE_DEFAULT);
+        } else {
+            route = new File("").getAbsolutePath()
+                .concat(IMAGE_REFERENCE + path1 + "/" + path2 + "/" + fileName);
+        }
+
         return storageService.getImage(Path.of(route));
     }
 

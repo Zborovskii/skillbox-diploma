@@ -18,3 +18,4 @@ spring.mail.properties.mail.transport.protocol: smtp
 spring.mail.properties.mail.debug: false
 spring.mail.host: smtp.gmail.com
 spring.image.reference: /src/main/resources/images/upload/
+spring.image.reference.default: /src/main/resources/static/default-1.png
