@@ -61,6 +61,7 @@ public class PostService {
             .collect(Collectors.toList());
     }
 
+    // не используемый метод нужно удалить
     public PostWithCommentsResponse getPostWithCommentsById(Integer id) {
 
         return Optional.ofNullable(postRepository.findPostsByById(id))
