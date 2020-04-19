@@ -58,4 +58,11 @@ public class ApiAuthController {
     public ResponseEntity<CaptchaResponse> getCaptcha() {
         return responseService.getCaptchaResponse();
     }
+
+    /**общие замечания по авторизации:
+     * нужно использовать spring security
+     * сейчас часть логики по формированию ответа вынесена в сервис ResponseService, что не правильно этот
+     * сервис разросся в помойку и всю логику касаемую авторизации нужно вынести в AuthService
+     */
+
 }

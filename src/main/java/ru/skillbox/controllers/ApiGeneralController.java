@@ -69,6 +69,14 @@ public class ApiGeneralController {
         return storageService.getImage(Path.of(route));
     }
 
+    /**
+     * логики не должно быть в контроллере
+     * формирование пути до расположения картинки не корректное, как вариант использовать одну переменную path в
+     * которой будет весь путь целиком
+     * сейчас сделан костыль с дефолтным путем (если пользователь не загрузил картинку), на самом деле нужно при
+     * сохранении в БД инфы от пользователя проверять, есть ли картинка, и если нет то заносить в БД дефолтный путь
+     */
+
     @GetMapping("/api/calendar")
     public ResponseEntity<CalendarResponse> getCalendar(@RequestParam(required = false) String year) {
         return new ResponseEntity<>(responseService.getCalendarResponse(year), HttpStatus.OK);

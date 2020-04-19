@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppConfig {
 
-    private final Map<String, Integer> sessions = new HashMap<>();
+    private final Map<String, Integer> sessions = new HashMap<>();//нужно использовать ConcurrentHashMap т.к. она
+    // потокобезопасная
     private final Captcha captcha = new Captcha();
 
     public void addSession(String sessionId, Integer userId) {

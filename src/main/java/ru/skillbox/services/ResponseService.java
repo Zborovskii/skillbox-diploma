@@ -63,6 +63,7 @@ public class ResponseService {
     @Autowired
     private PostRepository postRepository;
 
+    //вынести в CalendarService
     public CalendarResponse getCalendarResponse(String year) {
 
         Integer currentYear = LocalDate.now().getYear();
@@ -86,6 +87,7 @@ public class ResponseService {
         return calendarResponse;
     }
 
+    //хардкор вынести в конфиги а само формирование в сервис BlogInfoService
     public GeneralBlogInfo getGeneralBlogInfo() {
         GeneralBlogInfo response = new GeneralBlogInfo();
         response.setCopyright("Зборовский Александр");
@@ -177,6 +179,7 @@ public class ResponseService {
         return list;
     }
 
+    //пагинация должна происходить в БД чтобы не тянуть оттуда лишнюю инфу, кот. в последствии всеравно будет обрезана
     private <T> List<T> offsetList(Integer offset, Integer limit, List<T> list) {
         if (list.isEmpty() || offset > list.size()) {
             return Collections.EMPTY_LIST;
@@ -305,6 +308,7 @@ public class ResponseService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //есть дупликаты такого же кода см. общее замечание №5
     public ResponseEntity<PostsResponse> getModeratedPosts(Integer offset, Integer limit, ModerationStatus status) {
         Optional<User> userOptional = authService.getAuthorizedUser();
         if (userOptional.isEmpty()) {
@@ -381,7 +385,7 @@ public class ResponseService {
     }
 
     public ResponseEntity<ResultResponse> comment(NewCommentRequest comment) {
-        Optional<User> userOptional = authService.getAuthorizedUser();
+        Optional<User> userOptional = authService.getAuthorizedUser(); //название переменной - user + общее замечание №5
         if (userOptional.isEmpty()) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
